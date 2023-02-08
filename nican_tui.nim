@@ -1,7 +1,6 @@
 import os, times, strutils
 import illwill
 
-const days: int = 30
 
 let c    = now()
 let cy   = format(c, "yyyy")
@@ -9,7 +8,17 @@ let cym  = format(c, "yyyy-MM")
 let cmy  = format(c, "MMMM yyyy")
 let cdd  = format(c, "dd")
 let cmmm = format(c, "MMM")
+let cm   = format(c, "MM")
 let d1om = parse($cym & "-01", "yyyy-MM-dd")
+
+var feb: int
+if is_leap_year(parse_int(format(c, "yyyy"))):
+  feb = 29
+else:
+  feb = 28
+
+let mdays: seq[int] = @[31, feb, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+let days = mdays[parse_int(cm) - 1]
 
 proc exit() {.noconv.} =
   illwill_deinit()
@@ -82,9 +91,7 @@ proc draw_day_info(d: int): void =
   tb.write(40, 1, reset_style, bg_black, fg_white, $cmmm & " " & $d & " " &  $cy)
   draw_notes(40, 2, notes, d)
 
-
-var curs:   int = parse_int(cdd)
-
+var curs: int    = parse_int(cdd)
 
 while true:
   var key = get_key()
@@ -105,7 +112,7 @@ while true:
       curs -= 1
   of Key.Enter: draw_day_info(curs)
   else:
-    tb.write(8, 4, reset_style, fg_green, "a")
+    sleep(50)
 
   width  = terminal_width()
   height = terminal_height()
