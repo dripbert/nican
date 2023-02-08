@@ -1,6 +1,5 @@
 import std/[strutils, times, os]
 
-const mdays: seq[int] = @[31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 const padding: int = 4
 const msg_length: int = 47
 let notes_file: string = get_env("HOME") & "/.nimem_notes"
@@ -11,7 +10,15 @@ let cur_m   = format(cur, "MM")
 let cur_my  = format(cur, "MMMM yyyy")
 let cur_ym  = format(cur, "yyyy-MM")
 
-let cdays   = mdays[parse_int($cur_m) - 1]
+var feb: int
+if is_leap_year(parse_int(format(cur, "yyyy"))):
+  feb = 29
+else:
+  feb = 28
+
+let mdays: seq[int] = @[31, feb, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+let cdays = mdays[parse_int($cur_m) - 1]
 
 var pnotes: bool = false
 
